@@ -13,6 +13,7 @@ interface ISafeVault {
 }
 
 contract ReentrancyAttacker {
+    // receive: callback function for empty data with any eth value
     receive() external payable {
         // Write your own code.
         // You have 10 deposit balance.
